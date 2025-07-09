@@ -7,6 +7,7 @@ import HomePage from "./pages/homePage";
 import Home from "./pages";
 import MovieDetailPage from "./pages/movieDetailPage";
 import ShowtimePage from "./pages/showTimePage";
+import LoginPage from "./pages/login";
 
 function App() {
   const dispatch = useDispatch();
@@ -35,6 +36,10 @@ function App() {
         {
           path: "/showtimes",
           element: <ShowtimePage />,
+        },
+        {
+          path: "/login",
+          element: <LoginPage />,
         },
         // {
         //   path: "/*",

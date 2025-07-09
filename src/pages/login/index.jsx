@@ -1,6 +1,5 @@
-"use client";
-
 import { useState } from "react";
+import { Button } from "../../components/Button";
 
 export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -67,7 +66,7 @@ export default function LoginPage() {
             <Button
               onClick={handleGoogleSignIn}
               disabled={isLoading}
-              className="w-full bg-white hover:bg-gray-50 text-gray-900 font-medium py-3 px-4 rounded-lg transition-all duration-200 hover:shadow-lg hover:scale-105 focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-900 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+              className="cursor-pointer w-full bg-white hover:bg-gray-50 text-gray-900 font-medium py-3 px-4 rounded-lg transition-all duration-200 hover:shadow-lg hover:scale-105 focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-900 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
             >
               <div className="flex items-center justify-center space-x-3">
                 {isLoading ? (
