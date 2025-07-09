@@ -1,10 +1,13 @@
 import { useState, useEffect } from "react";
 import { FiMenu, FiX } from "react-icons/fi";
 import { FaUser, FaSignOutAlt, FaCog, FaMoon, FaSun } from "react-icons/fa";
+import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const user = useSelector((state) => state.auth.user);
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -22,9 +25,9 @@ const Header = () => {
   const toggleTheme = () => setIsDarkMode(!isDarkMode);
 
   const navigationLinks = [
-    { name: "Home", path: "#" },
-    { name: "Movies", path: "#" },
-    { name: "Showtimes", path: "#" },
+    { name: "Home", path: "/" },
+    { name: "Movies", path: "/movies" },
+    { name: "Showtimes", path: "/showtimes" },
     { name: "Bookings", path: "#" },
     { name: "Contact", path: "#" },
   ];
@@ -39,22 +42,22 @@ const Header = () => {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <a
-              href="#"
+            <Link
+              to="/"
               className={`text-2xl font-bold font-sans ${
                 isDarkMode ? "text-white" : "text-gray-900"
               }`}
             >
               CineVerse
-            </a>
+            </Link>
           </div>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex space-x-8">
             {navigationLinks.map((link) => (
-              <a
+              <Link
                 key={link.name}
-                href={link.path}
+                to={link.path}
                 className={`${
                   isDarkMode
                     ? "text-gray-300 hover:text-white"
@@ -62,7 +65,7 @@ const Header = () => {
                 } px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200`}
               >
                 {link.name}
-              </a>
+              </Link>
             ))}
           </nav>
 
@@ -80,7 +83,7 @@ const Header = () => {
               {isDarkMode ? <FaSun size={20} /> : <FaMoon size={20} />}
             </button>
 
-            {isLoggedIn ? (
+            {user != null ? (
               <div className="relative">
                 <button
                   onClick={toggleDropdown}
@@ -127,12 +130,11 @@ const Header = () => {
                 )}
               </div>
             ) : (
-              <button
-                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200"
-                onClick={() => setIsLoggedIn(true)}
-              >
-                Login / Signup
-              </button>
+              <Link to="/login">
+                <button className="cursor-pointer bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200">
+                  Login
+                </button>
+              </Link>
             )}
 
             {/* Mobile menu button */}

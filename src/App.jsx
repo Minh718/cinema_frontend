@@ -9,6 +9,7 @@ import MovieDetailPage from "./pages/movieDetailPage";
 import ShowtimePage from "./pages/showTimePage";
 import LoginPage from "./pages/login";
 import BookingPage from "./pages/bookingPage";
+import Authenticate from "./pages/authenticate";
 
 function App() {
   const dispatch = useDispatch();
@@ -17,11 +18,11 @@ function App() {
     dispatch(loadUser());
   }, [dispatch]);
   const router = createBrowserRouter([
-    // {
-    //   path: "/authenticate",
-    //   element: <Authenticate />,
-    //   // loader: teamLoader,
-    // },
+    {
+      path: "/authenticate",
+      element: <Authenticate />,
+      // loader: teamLoader,
+    },
     {
       path: "/",
       element: <Home />,

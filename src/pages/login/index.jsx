@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Button } from "../../components/Button";
+import { oAuthGoogle } from "../../constants/oAuthGoogle";
 
 export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -8,19 +9,15 @@ export default function LoginPage() {
     setIsLoading(true);
 
     // Simulate Google OAuth flow
-    try {
-      // In a real app, this would integrate with Google OAuth
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+    const callbackUrl = oAuthGoogle.redirectUri;
+    const authUrl = oAuthGoogle.authUri;
+    const googleClientId = oAuthGoogle.clientId;
 
-      // Mock successful login - redirect to dashboard
-      console.log("Login successful! Redirecting to dashboard...");
-      // window.location.href = '/dashboard'
-      alert("Login successful! Welcome to CineVerse!");
-    } catch (error) {
-      console.error("Login failed:", error);
-    } finally {
-      setIsLoading(false);
-    }
+    const targetUrl = `${authUrl}?redirect_uri=${encodeURIComponent(
+      callbackUrl
+    )}&response_type=code&client_id=${googleClientId}&scope=openid%20email%20profile`;
+    console.log(targetUrl);
+    window.location.href = targetUrl;
   };
 
   return (
