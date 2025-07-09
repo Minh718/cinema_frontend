@@ -9,7 +9,8 @@ export default function Home() {
       <Header />
       <main>
         <div className="flex justify-center bg-slate-200">
-          <div className="max-w-screen-xl w-[95%]">
+          {/* <div className="max-w-screen-2xl w-[95%]"> */}
+          <div className="w-full">
             <Outlet />
           </div>
         </div>
