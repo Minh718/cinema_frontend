@@ -8,6 +8,7 @@ import Home from "./pages";
 import MovieDetailPage from "./pages/movieDetailPage";
 import ShowtimePage from "./pages/showTimePage";
 import LoginPage from "./pages/login";
+import BookingPage from "./pages/bookingPage";
 
 function App() {
   const dispatch = useDispatch();
@@ -40,6 +41,10 @@ function App() {
         {
           path: "/login",
           element: <LoginPage />,
+        },
+        {
+          path: "/booking",
+          element: <BookingPage />,
         },
         // {
         //   path: "/*",

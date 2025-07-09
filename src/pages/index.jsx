@@ -7,7 +7,7 @@ export default function Home() {
   return (
     <div className="relative">
       <Header />
-      <main>
+      <main className="pt-16">
         <div className="flex justify-center bg-slate-200">
           {/* <div className="max-w-screen-2xl w-[95%]"> */}
           <div className="w-full">
