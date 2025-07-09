@@ -6,6 +6,7 @@ import { loadUser } from "./features/auth/authSlice";
 import HomePage from "./pages/homePage";
 import Home from "./pages";
 import MovieDetailPage from "./pages/movieDetailPage";
+import ShowtimePage from "./pages/showTimePage";
 
 function App() {
   const dispatch = useDispatch();
@@ -30,6 +31,10 @@ function App() {
         {
           path: "/movie/1",
           element: <MovieDetailPage />,
+        },
+        {
+          path: "/showtimes",
+          element: <ShowtimePage />,
         },
         // {
         //   path: "/*",
