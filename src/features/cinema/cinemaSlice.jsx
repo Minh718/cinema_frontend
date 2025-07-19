@@ -14,10 +14,11 @@ export const getNearestCinema = createAsyncThunk(
   "cinema/getNearest",
   async (_, thunkAPI) => {
     try {
+      // const cinemas = await getAllCinemas();
       const userLocation = await new Promise((resolve, reject) => {
         if (!navigator.geolocation) {
           let nearest = cinemas[0];
-          return { nearest, cinemas };
+          return { cinemaId: nearest.id, cinemas };
         }
 
         navigator.geolocation.getCurrentPosition(
@@ -40,7 +41,8 @@ export const getNearestCinema = createAsyncThunk(
           nearest = cinemas[i];
         }
       }
-      return { nearest, userLocation, cinemas };
+      console.log({ cinemaId: nearest.id, userLocation, cinemas });
+      return { cinemaId: nearest.id, userLocation, cinemas };
     } catch (err) {
       return thunkAPI.rejectWithValue(
         err.message || "Failed to get nearest cinema"
@@ -53,14 +55,14 @@ const cinemaSlice = createSlice({
   name: "cinema",
   initialState: {
     cinemas: null,
-    currentCinema: null,
+    cinemaId: null,
     userLocation: null,
     status: "idle",
     error: null,
   },
   reducers: {
     setCinemaManually: (state, action) => {
-      state.currentCinema = action.payload;
+      state.cinemaId = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -70,7 +72,7 @@ const cinemaSlice = createSlice({
       })
       .addCase(getNearestCinema.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.currentCinema = action.payload.nearest;
+        state.cinemaId = action.payload.cinemaId;
         state.cinemas = action.payload.cinemas;
         state.userLocation = action.payload.userLocation;
       })

@@ -1,20 +1,78 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { BsCalendar3, BsClock, BsFilm } from "react-icons/bs";
-import { format } from "date-fns";
+import { useSelector } from "react-redux";
+import {
+  getFutureShowDatesByMovieId,
+  getFutureShowTimesByMovieId,
+  getMovieIdsHaveShowtimeByCinemaId,
+} from "../../api/showtime";
 import BannerMovies from "./components/BannerMovies";
 import MovieCard from "./components/MovieCard";
+import { getMoviesForHomePage } from "../../api/movie";
 const HomePage = () => {
+  const { cinemaId } = useSelector((state) => state.cinema);
   const [selectedMovie, setSelectedMovie] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
-  const [selectedTime, setSelectedTime] = useState("");
+  const [selectedShowTime, setSelectedShowTime] = useState(null);
   const [nowShowingMovies, setNowShowingMovies] = useState([]);
-  const [upcomngMovies, setUpcomingMovies] = useState([]);
-  const [nowShowingMovieIds, setNowShowingMovieIds] = useState([1, 2]);
+  const [upcomingMovies, setUpcomingMovies] = useState([]);
+  const [moviesHaveShowtime, setMoviesHaveShowtime] = useState([]);
+  const [dates, setDates] = useState([]);
+  const [showTimes, setShowTimes] = useState([]);
 
-  const timeSlots = ["10:00 AM", "1:00 PM", "4:00 PM", "7:00 PM", "10:00 PM"];
+  const isFormComplete = selectedMovie && selectedDate && selectedShowTime;
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const [movieData, idsWithShowtime] = await Promise.all([
+          getMoviesForHomePage(),
+          getMovieIdsHaveShowtimeByCinemaId({ cinemaId }),
+        ]);
 
-  const isFormComplete = selectedMovie && selectedDate && selectedTime;
+        setNowShowingMovies(movieData.nowShowing);
+        setUpcomingMovies(movieData.upcoming);
 
+        const filtered = movieData.nowShowing.filter((movie) =>
+          idsWithShowtime.includes(movie.id)
+        );
+        setMoviesHaveShowtime(filtered);
+        setSelectedMovie("");
+        setSelectedDate("");
+        setSelectedShowTime(null);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    if (cinemaId) {
+      fetchData();
+    }
+  }, [cinemaId]);
+  useEffect(() => {
+    if (selectedMovie && cinemaId) {
+      getFutureShowDatesByMovieId({ movieId: selectedMovie, cinemaId })
+        .then(setDates)
+        .catch(console.error);
+    } else {
+      setDates([]);
+      setSelectedDate("");
+    }
+  }, [selectedMovie, cinemaId]);
+
+  useEffect(() => {
+    if (selectedMovie && cinemaId && selectedDate) {
+      getFutureShowTimesByMovieId({
+        movieId: selectedMovie,
+        cinemaId,
+        date: selectedDate,
+      })
+        .then(setShowTimes)
+        .catch(console.error);
+    } else {
+      setShowTimes([]);
+      setSelectedShowTime("");
+    }
+  }, [selectedMovie, cinemaId, selectedDate]);
   return (
     <div className="min-h-screen bg-gray-900">
       {/* Hero Section */}
@@ -34,7 +92,7 @@ const HomePage = () => {
                 className="w-full bg-gray-700 text-white pl-10 pr-4 py-3 rounded-lg focus:ring-2 focus:ring-red-500"
               >
                 <option value="">Select Movie</option>
-                {nowShowingMovies.map((movie) => (
+                {moviesHaveShowtime.map((movie) => (
                   <option key={movie.id} value={movie.id}>
                     {movie.title}
                   </option>
@@ -44,26 +102,31 @@ const HomePage = () => {
 
             <div className="relative">
               <BsCalendar3 className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-              <input
-                type="date"
+              <select
                 value={selectedDate}
                 onChange={(e) => setSelectedDate(e.target.value)}
-                min={format(new Date(), "yyyy-MM-dd")}
                 className="w-full bg-gray-700 text-white pl-10 pr-4 py-3 rounded-lg focus:ring-2 focus:ring-red-500"
-              />
+              >
+                <option value="">Select date</option>
+                {dates.map((date, index) => (
+                  <option key={index} value={date}>
+                    {date}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div className="relative">
               <BsClock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
               <select
-                value={selectedTime}
-                onChange={(e) => setSelectedTime(e.target.value)}
+                value={selectedShowTime?.id}
+                onChange={(e) => setSelectedShowTime(e.target.value)}
                 className="w-full bg-gray-700 text-white pl-10 pr-4 py-3 rounded-lg focus:ring-2 focus:ring-red-500"
               >
                 <option value="">Select Time</option>
-                {timeSlots.map((time) => (
-                  <option key={time} value={time}>
-                    {time}
+                {showTimes.map((showtime) => (
+                  <option key={showtime.id} value={showtime}>
+                    {showtime.startTime}
                   </option>
                 ))}
               </select>
@@ -88,6 +151,15 @@ const HomePage = () => {
         <h2 className="text-3xl font-bold text-white mb-8">Now Showing</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {nowShowingMovies.map((movie) => (
+            <MovieCard key={movie.id} movie={movie} />
+          ))}
+        </div>
+      </div>
+
+      <div className="container mx-auto px-4 py-12">
+        <h2 className="text-3xl font-bold text-white mb-8">Upcoming</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {upcomingMovies.map((movie) => (
             <MovieCard key={movie.id} movie={movie} />
           ))}
         </div>

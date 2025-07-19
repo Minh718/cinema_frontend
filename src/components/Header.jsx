@@ -1,18 +1,21 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaCog, FaMoon, FaSignOutAlt, FaSun, FaUser } from "react-icons/fa";
 import { FiMenu, FiX } from "react-icons/fi";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import keycloak from "../keycloak";
+import { logout } from "../features/auth/authSlice";
+import { setCinemaManually } from "../features/cinema/cinemaSlice";
 
 const Header = () => {
+  const { cinemas, cinemaId } = useSelector((state) => state.cinema);
+  const [selectedCinemaId, setSelectedCinemaId] = useState(cinemaId);
   const [isOpen, setIsOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const user = useSelector((state) => state.auth.user);
+  const { isAuthenticated } = useSelector((state) => state.auth);
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-
+  const dispatch = useDispatch();
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
@@ -35,7 +38,10 @@ const Header = () => {
     { name: "Admin", path: "/admin" },
     { name: "Contact", path: "#" },
   ];
-
+  const handleChangeCinema = (e) => {
+    dispatch(setCinemaManually(e.target.value));
+    setSelectedCinemaId(e.target.value);
+  };
   return (
     <header
       className={`fixed w-full z-50 transition-all duration-300 ${
@@ -75,6 +81,18 @@ const Header = () => {
 
           {/* Right Side Actions */}
           <div className="flex items-center space-x-4">
+            <select
+              id="cinema-select"
+              value={selectedCinemaId}
+              onChange={handleChangeCinema}
+              className="bg-white backdrop-blur-lg text-gray-800 px-2 py-1 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-200"
+            >
+              {cinemas.map((cinema) => (
+                <option key={cinema.id} value={cinema.id}>
+                  {cinema.name}
+                </option>
+              ))}
+            </select>
             <button
               onClick={toggleTheme}
               className={`p-2 rounded-full ${
@@ -87,7 +105,7 @@ const Header = () => {
               {isDarkMode ? <FaSun size={20} /> : <FaMoon size={20} />}
             </button>
 
-            {user != null ? (
+            {isAuthenticated ? (
               <div className="relative">
                 <button
                   onClick={toggleDropdown}
