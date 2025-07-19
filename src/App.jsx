@@ -1,23 +1,40 @@
-import { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import React, { useEffect, useState } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import Admin from "./admin/index";
+import Dashboard from "./admin/page/Dashboard";
 import "./App.css";
-import { loadUser } from "./features/auth/authSlice";
-import HomePage from "./pages/homePage";
+import keycloak from "./keycloak";
 import Home from "./pages";
+import Authenticate from "./pages/authenticate";
+import BookingPage from "./pages/bookingPage";
+import HomePage from "./pages/homePage";
+import LoginPage from "./pages/login";
 import MovieDetailPage from "./pages/movieDetailPage";
 import ShowtimePage from "./pages/showTimePage";
-import LoginPage from "./pages/login";
-import BookingPage from "./pages/bookingPage";
-import Authenticate from "./pages/authenticate";
-
+import { useSelector, useDispatch } from "react-redux";
+import { logout } from "./features/auth/authSlice";
 function App() {
+  const { isAuthenticated, user, keycloak } = useSelector(
+    (state) => state.auth
+  );
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    dispatch(loadUser());
-  }, [dispatch]);
   const router = createBrowserRouter([
+    {
+      path: "/admin",
+      element: <Admin />,
+      children: [
+        {
+          index: true, // default child when path === "/admin"
+          element: <Dashboard />,
+        },
+        {
+          path: "dashboard", // becomes /admin/dashboard
+          element: <Dashboard />,
+        },
+      ],
+      // loader: teamLoader,
+    },
     {
       path: "/authenticate",
       element: <Authenticate />,

@@ -1,14 +1,17 @@
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
+import React from "react";
 import "./index.css";
-import App from "./App.jsx";
-import { store } from "./app/store.js";
+import { createRoot } from "react-dom/client";
 import { Provider } from "react-redux";
+import App from "./App";
+import { store } from "./app/store";
+import { ReactKeycloakProvider } from "@react-keycloak/web";
+import keycloak from "./keycloak";
+import KeycloakProviderWrapper from "./KeycloakProviderWrapper";
 
 createRoot(document.getElementById("root")).render(
-  <StrictMode>
-    <Provider store={store}>
+  <Provider store={store}>
+    <KeycloakProviderWrapper>
       <App />
-    </Provider>
-  </StrictMode>
+    </KeycloakProviderWrapper>
+  </Provider>
 );

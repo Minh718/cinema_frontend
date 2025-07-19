@@ -1,25 +1,17 @@
-import { useState } from "react";
+import React, { useState } from "react";
+import { useSelector } from "react-redux";
 import { Button } from "../../components/Button";
-import { oAuthGoogle } from "../../constants/oAuthGoogle";
-
+import keycloak from "../../keycloak";
 export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
+  const user = useSelector((state) => state.auth.user);
 
-  const handleGoogleSignIn = async () => {
-    setIsLoading(true);
-
-    // Simulate Google OAuth flow
-    const callbackUrl = oAuthGoogle.redirectUri;
-    const authUrl = oAuthGoogle.authUri;
-    const googleClientId = oAuthGoogle.clientId;
-
-    const targetUrl = `${authUrl}?redirect_uri=${encodeURIComponent(
-      callbackUrl
-    )}&response_type=code&client_id=${googleClientId}&scope=openid%20email%20profile`;
-    console.log(targetUrl);
-    window.location.href = targetUrl;
+  const loginWithGoogle = () => {
+    keycloak.login({
+      idpHint: "google", // <-- This tells Keycloak to use Google as the IdP
+      redirectUri: window.location.origin,
+    });
   };
-
   return (
     <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4 relative overflow-hidden">
       {/* Cinematic background with gradient overlay */}
@@ -61,7 +53,7 @@ export default function LoginPage() {
           {/* Google Sign-In Button */}
           <div className="space-y-4">
             <Button
-              onClick={handleGoogleSignIn}
+              onClick={loginWithGoogle}
               disabled={isLoading}
               className="cursor-pointer w-full bg-white hover:bg-gray-50 text-gray-900 font-medium py-3 px-4 rounded-lg transition-all duration-200 hover:shadow-lg hover:scale-105 focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-900 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
             >

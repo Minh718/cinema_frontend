@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { FaCog, FaMoon, FaSignOutAlt, FaSun, FaUser } from "react-icons/fa";
 import { FiMenu, FiX } from "react-icons/fi";
-import { FaUser, FaSignOutAlt, FaCog, FaMoon, FaSun } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import keycloak from "../keycloak";
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -19,7 +20,10 @@ const Header = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
+  const handleLogout = () => {
+    keycloak.logout();
+    dispatch(logout());
+  };
   const toggleMenu = () => setIsOpen(!isOpen);
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
   const toggleTheme = () => setIsDarkMode(!isDarkMode);
@@ -28,7 +32,7 @@ const Header = () => {
     { name: "Home", path: "/" },
     { name: "Movies", path: "/movies" },
     { name: "Showtimes", path: "/showtimes" },
-    { name: "Bookings", path: "#" },
+    { name: "Admin", path: "/admin" },
     { name: "Contact", path: "#" },
   ];
 
@@ -120,6 +124,7 @@ const Header = () => {
                     </a>
                     <a
                       href="#"
+                      onClick={handleLogout}
                       className={`flex items-center px-4 py-2 text-sm ${
                         isDarkMode ? "text-gray-300" : "text-gray-700"
                       } hover:bg-gray-700`}
