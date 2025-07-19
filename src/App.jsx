@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useEffect, useState } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Admin from "./admin/index";
@@ -13,12 +14,15 @@ import MovieDetailPage from "./pages/movieDetailPage";
 import ShowtimePage from "./pages/showTimePage";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "./features/auth/authSlice";
+import { getNearestCinema } from "./features/cinema/cinemaSlice";
 function App() {
   const { isAuthenticated, user, keycloak } = useSelector(
     (state) => state.auth
   );
   const dispatch = useDispatch();
-
+  useEffect(() => {
+    dispatch(getNearestCinema());
+  }, [dispatch]);
   const router = createBrowserRouter([
     {
       path: "/admin",
