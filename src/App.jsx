@@ -15,10 +15,12 @@ import ShowtimePage from "./pages/showTimePage";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "./features/auth/authSlice";
 import { getNearestCinema } from "./features/cinema/cinemaSlice";
+import PollingBookingPage from "./pages/pollingBookingPage";
 function App() {
   const { isAuthenticated, user, keycloak } = useSelector(
     (state) => state.auth
   );
+  console.log(keycloak?.token);
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(getNearestCinema());
@@ -67,6 +69,10 @@ function App() {
         {
           path: "/booking",
           element: <BookingPage />,
+        },
+        {
+          path: "/booking/polling/:id",
+          element: <PollingBookingPage />,
         },
         // {
         //   path: "/*",

@@ -4,17 +4,11 @@ import haversine from "haversine-distance";
 import { getAllCinemas } from "../../api/cinema";
 
 // Example cinema data (replace this with your API)
-const cinemas = [
-  { id: 1, name: "Cinema A", lat: 10.762622, lon: 106.660172 },
-  { id: 2, name: "Cinema B", lat: 10.762913, lon: 106.682171 },
-  { id: 3, name: "Cinema C", lat: 21.028511, lon: 105.804817 },
-];
-
 export const getNearestCinema = createAsyncThunk(
   "cinema/getNearest",
   async (_, thunkAPI) => {
     try {
-      // const cinemas = await getAllCinemas();
+      const cinemas = await getAllCinemas();
       const userLocation = await new Promise((resolve, reject) => {
         if (!navigator.geolocation) {
           let nearest = cinemas[0];

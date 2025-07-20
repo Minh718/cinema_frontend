@@ -1,7 +1,7 @@
 import axios from "axios";
 import { baseURL } from "../constants/baseURL";
 
-export const getMoviesForHomePage = async (authCode) => {
+export const getMoviesForHomePage = async () => {
     // const res = await axios.get(
     //     baseURL + `/movies/public/homepage`
     // );
@@ -49,4 +49,19 @@ export const getMoviesForHomePage = async (authCode) => {
 
     return res.result;
 
+};
+
+export const getMovieById = async ({ movieId }) => {
+    return {
+        "id": 1,
+        "title": "The Dark Knight",
+        "description": "When the menace known as the Joker wreaks havoc and chaos on the people of Gotham...",
+        "posterPath": "https://images.unsplash.com/photo-1509347528160-9a9e33742cdb",
+        "genres": ["Action", "Crime", "Drama"],
+        "nowShowing": true
+    }
+    const res = await axios.get(
+        baseURL + `/movies/public/${movieId}`
+    );
+    return res.result;
 };

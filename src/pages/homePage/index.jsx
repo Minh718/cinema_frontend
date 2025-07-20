@@ -3,15 +3,16 @@ import { BsCalendar3, BsClock, BsFilm } from "react-icons/bs";
 import { useSelector } from "react-redux";
 import {
   getFutureShowDatesByMovieId,
-  getFutureShowTimesByMovieId,
+  getShowTimesByMovieIdAndDate,
   getMovieIdsHaveShowtimeByCinemaId,
 } from "../../api/showtime";
 import BannerMovies from "./components/BannerMovies";
 import MovieCard from "./components/MovieCard";
 import { getMoviesForHomePage } from "../../api/movie";
+import { useNavigate } from "react-router-dom";
 const HomePage = () => {
   const { cinemaId } = useSelector((state) => state.cinema);
-  const [selectedMovie, setSelectedMovie] = useState("");
+  const [selectedMovie, setSelectedMovie] = useState(null);
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedShowTime, setSelectedShowTime] = useState(null);
   const [nowShowingMovies, setNowShowingMovies] = useState([]);
@@ -19,8 +20,19 @@ const HomePage = () => {
   const [moviesHaveShowtime, setMoviesHaveShowtime] = useState([]);
   const [dates, setDates] = useState([]);
   const [showTimes, setShowTimes] = useState([]);
-
+  const navigate = useNavigate();
   const isFormComplete = selectedMovie && selectedDate && selectedShowTime;
+  const handleBookNow = () => {
+    console.log(selectedShowTime);
+    console.log(moviesHaveShowtime.find((movie) => movie.id === selectedMovie));
+    const bookingData = {
+      movie: moviesHaveShowtime.find((movie) => movie.id === selectedMovie),
+      showTimeId: selectedShowTime,
+      roomId: showTimes.find((showTime) => showTime.id === selectedShowTime)
+        .roomId,
+    };
+    navigate("/booking", { state: { bookingData } });
+  };
   useEffect(() => {
     async function fetchData() {
       try {
@@ -38,7 +50,7 @@ const HomePage = () => {
         setMoviesHaveShowtime(filtered);
         setSelectedMovie("");
         setSelectedDate("");
-        setSelectedShowTime(null);
+        setSelectedShowTime("");
       } catch (err) {
         console.error(err);
       }
@@ -61,7 +73,7 @@ const HomePage = () => {
 
   useEffect(() => {
     if (selectedMovie && cinemaId && selectedDate) {
-      getFutureShowTimesByMovieId({
+      getShowTimesByMovieIdAndDate({
         movieId: selectedMovie,
         cinemaId,
         date: selectedDate,
@@ -88,7 +100,7 @@ const HomePage = () => {
               <BsFilm className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
               <select
                 value={selectedMovie}
-                onChange={(e) => setSelectedMovie(e.target.value)}
+                onChange={(e) => setSelectedMovie(Number(e.target.value))}
                 className="w-full bg-gray-700 text-white pl-10 pr-4 py-3 rounded-lg focus:ring-2 focus:ring-red-500"
               >
                 <option value="">Select Movie</option>
@@ -119,13 +131,13 @@ const HomePage = () => {
             <div className="relative">
               <BsClock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
               <select
-                value={selectedShowTime?.id}
-                onChange={(e) => setSelectedShowTime(e.target.value)}
+                value={selectedShowTime}
+                onChange={(e) => setSelectedShowTime(Number(e.target.value))}
                 className="w-full bg-gray-700 text-white pl-10 pr-4 py-3 rounded-lg focus:ring-2 focus:ring-red-500"
               >
                 <option value="">Select Time</option>
                 {showTimes.map((showtime) => (
-                  <option key={showtime.id} value={showtime}>
+                  <option key={showtime.id} value={showtime.id}>
                     {showtime.startTime}
                   </option>
                 ))}
@@ -134,6 +146,7 @@ const HomePage = () => {
 
             <button
               disabled={!isFormComplete}
+              onClick={handleBookNow}
               className={`w-full py-3 rounded-lg font-semibold transition-colors ${
                 isFormComplete
                   ? "bg-red-600 hover:bg-red-700 text-white"

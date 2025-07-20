@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { FaCog, FaMoon, FaSignOutAlt, FaSun, FaUser } from "react-icons/fa";
 import { FiMenu, FiX } from "react-icons/fi";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import keycloak from "../keycloak";
 import { logout } from "../features/auth/authSlice";
 import { setCinemaManually } from "../features/cinema/cinemaSlice";
@@ -16,6 +16,7 @@ const Header = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
@@ -41,6 +42,7 @@ const Header = () => {
   const handleChangeCinema = (e) => {
     dispatch(setCinemaManually(e.target.value));
     setSelectedCinemaId(e.target.value);
+    navigate("/");
   };
   return (
     <header
@@ -87,7 +89,7 @@ const Header = () => {
               onChange={handleChangeCinema}
               className="bg-white backdrop-blur-lg text-gray-800 px-2 py-1 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-200"
             >
-              {cinemas.map((cinema) => (
+              {cinemas?.map((cinema) => (
                 <option key={cinema.id} value={cinema.id}>
                   {cinema.name}
                 </option>
