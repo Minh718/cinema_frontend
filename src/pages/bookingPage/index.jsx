@@ -9,6 +9,9 @@ import {
 } from "react-icons/fa";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getDetailRoomByRoomId } from "../../api/cinema";
+import sockjs from "sockjs-client/dist/sockjs";
+import { Stomp } from "@stomp/stompjs";
+
 import { Badge } from "../../components/Badge";
 import { Button } from "../../components/Button";
 import {
@@ -25,6 +28,9 @@ import {
 import BookingConfirmationModal from "./components/BookingConfirmationModal";
 import { useSelector } from "react-redux";
 import { processSeatsBooking } from "../../api/booking";
+import { API_URL } from "../../constants/baseURL";
+import { TypeSeat } from "../../constants/TypeSeat";
+import { TypeMessageSeat } from "../../constants/TypeMessageSeat";
 const movieData = {
   title: "Dune: Part Two",
   poster: "/placeholder.svg?height=300&width=200",
@@ -35,38 +41,6 @@ const movieData = {
   pricePerSeat: 45000,
 };
 export default function ShowtimeBooking() {
-  // const generateSeats = () => {
-  //   const seats = [];
-  //   const seatsPerRow = 12;
-
-  //   // Some pre-booked seats for demonstration
-  //   const bookedSeats = ["A5", "A6", "C3", "C9", "E7", "F4", "F5", "G8"];
-
-  //   // Held seats (temporarily reserved by other users)
-  //   const heldSeats = ["F4", "G6"];
-
-  //   rows.forEach((row) => {
-  //     for (let i = 1; i <= seatsPerRow; i++) {
-  //       const seatId = `${row}${i}`;
-  //       let status = "available";
-
-  //       if (bookedSeats.includes(seatId)) {
-  //         status = "booked";
-  //       } else if (heldSeats.includes(seatId)) {
-  //         status = "held";
-  //       }
-
-  //       seats.push({
-  //         id: seatId,
-  //         row,
-  //         number: i,
-  //         status: status,
-  //       });
-  //     }
-  //   });
-
-  //   return seats;
-  // };
   const [seats, setSeats] = useState([]);
   const [movie, setMovie] = useState([]);
   const [showTime, setShowTime] = useState({});
@@ -76,17 +50,31 @@ export default function ShowtimeBooking() {
   const navigate = useNavigate();
   const { bookingData } = location.state;
   const { cinema, auth } = useSelector((state) => state);
+  const [stompClient, setStompClient] = useState(null);
   const handleSeatClick = (seatId) => {
+    const seat = seats.find((seat) => seat.id === seatId);
+    if (seat.status === TypeSeat.SELECTED) {
+      sendSeatsMessage({
+        type: TypeMessageSeat.RELEASE,
+        seatIds: [seatId],
+        showTimeId: showTime.id,
+      });
+    } else if (seat.status === TypeSeat.AVAILABLE) {
+      sendSeatsMessage({
+        type: TypeMessageSeat.HEAT,
+        seatIds: [seatId],
+        showTimeId: showTime.id,
+      });
+    } else return;
     setSeats((prevSeats) =>
       prevSeats.map((seat) => {
-        if (
-          seat.id === seatId &&
-          seat.status !== "booked" &&
-          seat.status !== "held"
-        ) {
+        if (seat.id === seatId) {
           return {
             ...seat,
-            status: seat.status === "selected" ? "available" : "selected",
+            status:
+              seat.status === TypeSeat.SELECTED
+                ? TypeSeat.AVAILABLE
+                : TypeSeat.SELECTED,
           };
         }
         return seat;
@@ -99,13 +87,13 @@ export default function ShowtimeBooking() {
       "w-8 h-8 rounded-t-lg text-xs font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400";
 
     switch (seat.status) {
-      case "available":
+      case TypeSeat.AVAILABLE:
         return `${baseClasses} bg-gray-600 hover:bg-gray-500 text-gray-200 cursor-pointer hover:scale-105`;
-      case "selected":
+      case TypeSeat.SELECTED:
         return `${baseClasses} bg-blue-600 hover:bg-blue-500 text-white cursor-pointer scale-105 ring-2 ring-blue-400`;
-      case "booked":
+      case TypeSeat.BOOKED:
         return `${baseClasses} bg-red-500 text-red-200 cursor-not-allowed opacity-60`;
-      case "held":
+      case TypeSeat.HELD:
         return `${baseClasses} bg-yellow-500 text-yellow-900 cursor-not-allowed opacity-80 animate-pulse`;
       default:
         return baseClasses;
@@ -131,9 +119,9 @@ export default function ShowtimeBooking() {
         setRoom({ ...roomRes, seats: null });
         const seatsdata = roomRes.seats.map((seat) => {
           if (bookedSeats.includes(seat.id)) {
-            seat.status = "booked";
+            seat.status = TypeSeat.BOOKED;
           } else if (headSeats.includes(seat.id)) {
-            seat.status = "held";
+            seat.status = TypeSeat.HELD;
           }
           return seat;
         });
@@ -151,25 +139,60 @@ export default function ShowtimeBooking() {
     return String.fromCharCode("A".charCodeAt(0) + index);
   };
   const range1ToN = (n) => Array.from({ length: n }, (_, i) => i + 1);
-  // useEffect(() => {
-  //   if (!bookingData) return;
+  const sendSeatsMessage = ({ type, seatIds, showTimeId }) => {
+    if (stompClient) {
+      stompClient.send(
+        "/app/seats",
+        {},
+        JSON.stringify({ type, seatIds, showTimeId })
+      );
+    }
+  };
+  useEffect(() => {
+    if (!bookingData) return;
 
-  //   const socket = new SockJS("https://your-domain.com/ws/heatseat/heatseat-ws");
-  //   const stompClient = Stomp.over(socket);
+    const socket = new sockjs(API_URL + "/ws/heatseat/heatseat-ws");
+    const stompClient = Stomp.over(socket);
 
-  //   stompClient.connect({}, () => {
-  //     stompClient.subscribe(`/topic/seats/${bookingData.showTimeId}`, (msg) => {
-  //       const payload = JSON.parse(msg.body);
-  //       if (payload.type === "HOLD") {
-  //         // handle seat UI update
-  //       }
-  //     });
-  //   });
+    stompClient.connect({}, () => {
+      stompClient.subscribe(`/topic/seats/${bookingData.showTimeId}`, (msg) => {
+        const payload = JSON.parse(msg.body);
+        const seats = payload.seats;
 
-  //   return () => {
-  //     stompClient.disconnect();
-  //   };
-  // }, [bookingData]);
+        if (payload.type === TypeMessageSeat.HEAT) {
+          setSeats((prevSeats) => {
+            return prevSeats.map((seat) => {
+              if (seats.includes(seat.id)) {
+                return { ...seat, status: TypeSeat.HELD };
+              }
+              return seat;
+            });
+          });
+        } else if (payload.type === TypeMessageSeat.RELEASE) {
+          setSeats((prevSeats) => {
+            return prevSeats.map((seat) => {
+              if (seats.includes(seat.id)) {
+                return { ...seat, status: TypeSeat.AVAILABLE };
+              }
+              return seat;
+            });
+          });
+        }
+      });
+    });
+    setStompClient(stompClient);
+    return () => {
+      const seatIds = seats
+        .filter((seat) => seat.status === TypeSeat.SELECTED)
+        .map((seat) => seat.id);
+      sendSeatsMessage({
+        type: TypeMessageSeat.RELEASE,
+        seatIds,
+        showTimeId: bookingData.showTimeId,
+      });
+      stompClient.disconnect();
+    };
+  }, [bookingData]);
   const formatPrice = (price) => {
     return new Intl.NumberFormat("id-ID", {
       style: "currency",
@@ -183,7 +206,7 @@ export default function ShowtimeBooking() {
   };
   const handlePayment = async (paymentMethod) => {
     const bookingsSeats = seats
-      .filter((seat) => seat.status === "selected")
+      .filter((seat) => seat.status === TypeSeat.SELECTED)
       .map((seat) => ({
         id: seat.id,
         code: seat.code,
@@ -201,7 +224,9 @@ export default function ShowtimeBooking() {
       console.log(e);
     }
   };
-  const selectedSeats = seats.filter((seat) => seat.status === "selected");
+  const selectedSeats = seats.filter(
+    (seat) => seat.status === TypeSeat.SELECTED
+  );
   const totalPrice = selectedSeats.length * showTime.basePrice;
 
   if (room == null) return <div>Loading...</div>;
@@ -301,13 +326,13 @@ export default function ShowtimeBooking() {
                                 key={seat.id}
                                 onClick={() => handleSeatClick(seat.id)}
                                 disabled={
-                                  seat.status === "booked" ||
-                                  seat.status === "held"
+                                  seat.status === TypeSeat.BOOKED ||
+                                  seat.status === TypeSeat.HELD
                                 }
                                 className={getSeatClassName(seat)}
                                 aria-label={`Seat ${seat.id}, ${seat.status}`}
                                 title={
-                                  seat.status === "held"
+                                  seat.status === TypeSeat.HELD
                                     ? "This seat is temporarily held by another user"
                                     : undefined
                                 }
@@ -401,9 +426,9 @@ export default function ShowtimeBooking() {
           movieTitle: movie?.title,
           showTime: `${showTime.startTime} - ${showTime.endTime} | ${showTime.date}`,
           seats: selectedSeats.map((seat) => seat.code).join(", "),
-          customerName: "Nguyễn Thanh",
+          customerName: auth.user.name,
           phone: "0919701101",
-          email: "minhprokute85209@gmail.com",
+          email: auth.user.email,
           totalPrice: 130500,
         }}
         onConfirm={handlePayment}

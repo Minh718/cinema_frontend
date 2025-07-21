@@ -1,26 +1,25 @@
 // @ts-nocheck
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Admin from "./admin/index";
 import Dashboard from "./admin/page/Dashboard";
 import "./App.css";
-import keycloak from "./keycloak";
+import { getNearestCinema } from "./features/cinema/cinemaSlice";
 import Home from "./pages";
 import Authenticate from "./pages/authenticate";
 import BookingPage from "./pages/bookingPage";
 import HomePage from "./pages/homePage";
 import LoginPage from "./pages/login";
 import MovieDetailPage from "./pages/movieDetailPage";
-import ShowtimePage from "./pages/showTimePage";
-import { useSelector, useDispatch } from "react-redux";
-import { logout } from "./features/auth/authSlice";
-import { getNearestCinema } from "./features/cinema/cinemaSlice";
+import NotFoundPage from "./pages/notFoundPage";
 import PollingBookingPage from "./pages/pollingBookingPage";
+import ShowtimePage from "./pages/showTimePage";
+import PrivateRoute from "./PrivateRoute";
+import PrivateAdminRoute from "./PrivateAdminRoute";
 function App() {
   const { isAuthenticated, user, keycloak } = useSelector(
     (state) => state.auth
   );
-  console.log(keycloak?.token);
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(getNearestCinema());
@@ -28,23 +27,21 @@ function App() {
   const router = createBrowserRouter([
     {
       path: "/admin",
-      element: <Admin />,
+      element: <PrivateAdminRoute />,
       children: [
         {
-          index: true, // default child when path === "/admin"
+          index: true,
           element: <Dashboard />,
         },
         {
-          path: "dashboard", // becomes /admin/dashboard
+          path: "dashboard",
           element: <Dashboard />,
         },
       ],
-      // loader: teamLoader,
     },
     {
       path: "/authenticate",
       element: <Authenticate />,
-      // loader: teamLoader,
     },
     {
       path: "/",
@@ -67,17 +64,22 @@ function App() {
           element: <LoginPage />,
         },
         {
-          path: "/booking",
-          element: <BookingPage />,
+          element: <PrivateRoute />,
+          children: [
+            {
+              path: "/booking",
+              element: <BookingPage />,
+            },
+            {
+              path: "/booking/polling/:id",
+              element: <PollingBookingPage />,
+            },
+          ],
         },
         {
-          path: "/booking/polling/:id",
-          element: <PollingBookingPage />,
+          path: "/*",
+          element: <NotFoundPage />,
         },
-        // {
-        //   path: "/*",
-        //   element: <NotFoundPage />,
-        // },
       ],
     },
   ]);
