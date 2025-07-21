@@ -57,13 +57,11 @@ export default function ShowtimeBooking() {
       sendSeatsMessage({
         type: TypeMessageSeat.RELEASE,
         seatIds: [seatId],
-        showTimeId: showTime.id,
       });
     } else if (seat.status === TypeSeat.AVAILABLE) {
       sendSeatsMessage({
         type: TypeMessageSeat.HEAT,
         seatIds: [seatId],
-        showTimeId: showTime.id,
       });
     } else return;
     setSeats((prevSeats) =>
@@ -139,26 +137,33 @@ export default function ShowtimeBooking() {
     return String.fromCharCode("A".charCodeAt(0) + index);
   };
   const range1ToN = (n) => Array.from({ length: n }, (_, i) => i + 1);
-  const sendSeatsMessage = ({ type, seatIds, showTimeId }) => {
+  const sendSeatsMessage = ({ type, seatIds }) => {
     if (stompClient) {
       stompClient.send(
         "/app/seats",
         {},
-        JSON.stringify({ type, seatIds, showTimeId })
+        JSON.stringify({
+          type,
+          seatIds,
+          showTimeId: showTime.id,
+          senderId: auth.sub,
+        })
       );
     }
   };
   useEffect(() => {
     if (!bookingData) return;
 
-    const socket = new sockjs(API_URL + "/ws/heatseat/heatseat-ws");
+    const socket = new sockjs(
+      API_URL + "/ws/heatseat/heatseat-ws?token=" + auth.token
+    );
     const stompClient = Stomp.over(socket);
 
     stompClient.connect({}, () => {
       stompClient.subscribe(`/topic/seats/${bookingData.showTimeId}`, (msg) => {
         const payload = JSON.parse(msg.body);
         const seats = payload.seats;
-
+        if (payload.senderId === auth.sub) return;
         if (payload.type === TypeMessageSeat.HEAT) {
           setSeats((prevSeats) => {
             return prevSeats.map((seat) => {

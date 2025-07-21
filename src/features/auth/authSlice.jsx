@@ -27,8 +27,19 @@ export const authSlice = createSlice(
     name: "auth",
     initialState: {
       keycloak: null,
-      token: null,
-      isAuthenticated: false,
+      token: {
+        sub: "1a2b3c4d-5678-90ef-gh12-345678901234",
+        email_verified: true,
+        name: "Minh Nguyen",
+        preferred_username: "minh.nguyen",
+        given_name: "Minh",
+        family_name: "Nguyen",
+        email: "minh@example.com",
+        realm_access: {
+          roles: ["user", "cinema-customer"],
+        },
+      },
+      isAuthenticated: true,
       user: null,
     },
     reducers: {
