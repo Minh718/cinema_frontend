@@ -98,3 +98,53 @@ export const getShowTimeAvailable = async (showtimeId) => {
     );
     return res.result;
 }
+
+
+export const getShowTimesOfMovieInDate = async ({ movieId, date }) => {
+    return {
+        "language": "English",
+        "subtitle": "Vietnamese",
+        "basePrice": 120000.0,
+        "movieId": 1,
+        "roomId": 5,
+        "cinemaId": 3,
+        "subShows": [
+            {
+                "id": 101,
+                "startTime": "14:00",
+                "endTime": "16:00"
+                , "basePrice": 120
+            },
+            {
+                "id": 102,
+                "startTime": "10:00",
+                "endTime": "12:00"
+                , "basePrice": 120
+
+            }
+        ],
+        "dubShows": [
+            {
+                "id": 201,
+                "startTime": "18:00",
+                "endTime": "20:00"
+                , "basePrice": 120
+
+            }, {
+                "id": 201,
+                "startTime": "20:00",
+                "endTime": "22:00"
+                , "basePrice": 120
+
+            }
+        ]
+    }
+    const res = await axios.get(
+        baseURL + `/showtimes/${movieId}/showtimes`, {
+        params: {
+            date: date
+        }
+    }
+    );
+    return res.result;
+}

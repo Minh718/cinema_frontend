@@ -65,3 +65,52 @@ export const getMovieById = async ({ movieId }) => {
     );
     return res.result;
 };
+
+export const getNowShowingMovies = () => {
+    return [
+        {
+            "id": 1,
+            "title": "Inception",
+            "originalTitle": "Inception",
+            "ageRating": "16+",
+            "description": "A skilled thief is given a chance at redemption if he can successfully perform inception.",
+            "duration": 148,
+            "director": "Christopher Nolan",
+            "language": "English",
+            "genres": [
+                { "id": 1, "name": "Action" },
+                { "id": 2, "name": "Sci-Fi" },
+                { "id": 3, "name": "Thriller" }
+            ],
+            "status": "NOW_SHOWING",
+            "thumbnailUrl": "https://example.com/thumbnails/inception.jpg",
+            "releaseDate": "2025-08-01",
+            "backdropPath": "https://example.com/backdrops/inception.jpg",
+            "posterPath": "https://example.com/posters/inception.jpg"
+        },
+        {
+            "id": 2,
+            "title": "The Grand Budapest Hotel",
+            "ageRating": "20+",
+
+            "originalTitle": "The Grand Budapest Hotel",
+            "description": "A concierge teams up with one of his employees to prove his innocence after he is framed for murder.",
+            "duration": 99,
+            "director": "Wes Anderson",
+            "language": "English",
+            "genres": [
+                { "id": 4, "name": "Comedy" },
+                { "id": 5, "name": "Drama" }
+            ],
+            "status": "NOW_SHOWING",
+            "thumbnailUrl": "https://example.com/thumbnails/grandbudapest.jpg",
+            "releaseDate": "2025-07-10",
+            "backdropPath": "https://example.com/backdrops/grandbudapest.jpg",
+            "posterPath": "https://example.com/posters/grandbudapest.jpg"
+        }
+    ]
+    const res = axios.get(
+        baseURL + `/movies/public/now-showing`
+    );
+    return res.result;
+}

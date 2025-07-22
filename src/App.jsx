@@ -1,7 +1,14 @@
 // @ts-nocheck
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import {
+  createBrowserRouter,
+  Navigate,
+  RouterProvider,
+  useNavigate,
+} from "react-router-dom";
+import Cookies from "js-cookie";
+
 import Dashboard from "./admin/page/Dashboard";
 import "./App.css";
 import { getNearestCinema } from "./features/cinema/cinemaSlice";
@@ -17,9 +24,8 @@ import ShowtimePage from "./pages/showTimePage";
 import PrivateRoute from "./PrivateRoute";
 import PrivateAdminRoute from "./PrivateAdminRoute";
 function App() {
-  const { isAuthenticated, user, keycloak } = useSelector(
-    (state) => state.auth
-  );
+  const { isAuthenticated } = useSelector((state) => state.auth);
+
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(getNearestCinema());
@@ -61,7 +67,11 @@ function App() {
         },
         {
           path: "/login",
-          element: <LoginPage />,
+          element: isAuthenticated ? (
+            <Navigate to="/" replace />
+          ) : (
+            <LoginPage />
+          ),
         },
         {
           element: <PrivateRoute />,

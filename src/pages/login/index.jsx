@@ -1,16 +1,36 @@
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Button } from "../../components/Button";
 import keycloak from "../../keycloak";
+import { setAuth } from "../../features/auth/authSlice";
+import { useNavigate } from "react-router-dom";
 export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
-  const user = useSelector((state) => state.auth.user);
-
+  const dispatch = useDispatch();
   const loginWithGoogle = () => {
-    keycloak.login({
-      idpHint: "google", // <-- This tells Keycloak to use Google as the IdP
-      redirectUri: window.location.origin,
-    });
+    // keycloak.login({
+    //   idpHint: "google", // <-- This tells Keycloak to use Google as the IdP
+    //   redirectUri: window.location.origin,
+    // });
+    dispatch(
+      setAuth({
+        keycloak: null,
+        token: null,
+        isAuthenticated: true,
+        user: {
+          sub: "1a2b3c4d-5678-90ef-gh12-345678901234",
+          email_verified: true,
+          name: "Minh Nguyen",
+          preferred_username: "minh.nguyen",
+          given_name: "Minh",
+          family_name: "Nguyen",
+          email: "minh@example.com",
+          realm_access: {
+            roles: ["user", "cinema-customer"],
+          },
+        },
+      })
+    );
   };
   return (
     <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4 relative overflow-hidden">

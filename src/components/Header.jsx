@@ -25,7 +25,7 @@ const Header = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
   const handleLogout = () => {
-    keycloak.logout();
+    // keycloak.logout();
     dispatch(logout());
   };
   const toggleMenu = () => setIsOpen(!isOpen);

@@ -6,12 +6,14 @@ import {
   getShowTimesByMovieIdAndDate,
   getMovieIdsHaveShowtimeByCinemaId,
 } from "../../api/showtime";
+import Cookies from "js-cookie";
 import BannerMovies from "./components/BannerMovies";
 import MovieCard from "./components/MovieCard";
 import { getMoviesForHomePage } from "../../api/movie";
 import { useNavigate } from "react-router-dom";
 const HomePage = () => {
   const { cinemaId } = useSelector((state) => state.cinema);
+  const { isAuthenticated } = useSelector((state) => state.auth);
   const [selectedMovie, setSelectedMovie] = useState(null);
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedShowTime, setSelectedShowTime] = useState(null);
@@ -23,15 +25,18 @@ const HomePage = () => {
   const navigate = useNavigate();
   const isFormComplete = selectedMovie && selectedDate && selectedShowTime;
   const handleBookNow = () => {
-    console.log(selectedShowTime);
-    console.log(moviesHaveShowtime.find((movie) => movie.id === selectedMovie));
     const bookingData = {
       movie: moviesHaveShowtime.find((movie) => movie.id === selectedMovie),
       showTimeId: selectedShowTime,
       roomId: showTimes.find((showTime) => showTime.id === selectedShowTime)
         .roomId,
     };
-    navigate("/booking", { state: { bookingData } });
+    if (!isAuthenticated) {
+      Cookies.set("bookingIntent", JSON.stringify(bookingData), {
+        expires: 1 / 288,
+      });
+      navigate("/login");
+    } else navigate("/booking", { state: { bookingData } });
   };
   useEffect(() => {
     async function fetchData() {
