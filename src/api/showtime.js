@@ -44,42 +44,35 @@ export const getShowTimesByMovieIdAndDate = async ({ movieId, cinemaId, date }) 
     // );
 
     // return res.result;
-    return [
-        {
-            id: 1,
-            "date": "2025-07-20",
-            "startTime": "14:00:00",
-            "endTime": "16:30:00",
-            "status": "SCHEDULED",
-            "screenType": "IMAX",
-            "language": "English",
-            "subtitle": "Vietnamese",
-            "basePrice": 120000.0,
-            "movieId": 101,
-            "roomId": 5,
-            "cinemaId": 2,
-            "createdAt": "2025-07-19T08:00:00",
-            "updatedAt": "2025-07-19T09:30:00"
-        },
-        {
-            id: 2,
-            "date": "2025-07-20",
-            "startTime": "17:00:00",
-            "endTime": "19:15:00",
-            "status": "SCHEDULED",
-            "screenType": "2D",
-            "language": "Vietnamese",
-            "subtitle": "English",
-            "basePrice": 90000.0,
-            "movieId": 102,
-            "roomId": 3,
-            "cinemaId": 2,
-            "createdAt": "2025-07-19T10:00:00",
-            "updatedAt": "2025-07-19T11:00:00"
-        }]
+    return {
+        "dubShows": [
+            {
+                "id": 101,
+                "startTime": "10:00",
+                "endTime": "12:00"
+            },
+            {
+                "id": 102,
+                "startTime": "14:00",
+                "endTime": "16:00"
+            }
+        ],
+        "subShows": [
+            {
+                "id": 103,
+                "startTime": "17:15",
+                "endTime": "19:15"
+            },
+            {
+                "id": 104,
+                "startTime": "20:00",
+                "endTime": "22:00"
+            }
+        ]
+    }
 };
 
-export const getShowTimeAvailable = async (showtimeId) => {
+export const getBookableDetailShowTime = async (showtimeId) => {
     return {
         id: 2,
         "date": "2025-07-25",
@@ -88,7 +81,7 @@ export const getShowTimeAvailable = async (showtimeId) => {
         "screenType": "IMAX",
         "language": "English",
         "subtitle": "Vietnamese",
-        "basePrice": 120000.0,
+        "basePrice": 120,
         "movieId": 101,
         "roomId": 12,
         "cinemaId": 5
@@ -100,50 +93,58 @@ export const getShowTimeAvailable = async (showtimeId) => {
 }
 
 
-export const getShowTimesOfMovieInDate = async ({ movieId, date }) => {
-    return {
+export const getShowTimeGroupsByTypeInDate = async (data) => {
+    return [{
+        "id": 11,
         "language": "English",
         "subtitle": "Vietnamese",
-        "basePrice": 120000.0,
+        "basePrice": 120,
         "movieId": 1,
         "roomId": 5,
         "cinemaId": 3,
-        "subShows": [
+        "type": "SUBTITLE",
+
+        "showTimes": [
             {
                 "id": 101,
                 "startTime": "14:00",
                 "endTime": "16:00"
-                , "basePrice": 120
             },
             {
                 "id": 102,
                 "startTime": "10:00",
                 "endTime": "12:00"
-                , "basePrice": 120
 
             }
         ],
-        "dubShows": [
+    },
+    {
+        "id": 12,
+        "language": "English",
+        "subtitle": "Vietnamese",
+        "basePrice": 120,
+        "movieId": 1,
+        "roomId": 5,
+        "cinemaId": 3,
+        "type": "DUBBED",
+        "showTimes": [
             {
                 "id": 201,
                 "startTime": "18:00",
                 "endTime": "20:00"
-                , "basePrice": 120
 
             }, {
                 "id": 201,
                 "startTime": "20:00",
                 "endTime": "22:00"
-                , "basePrice": 120
 
             }
         ]
-    }
+    },
+    ]
     const res = await axios.get(
-        baseURL + `/showtimes/${movieId}/showtimes`, {
-        params: {
-            date: date
-        }
+        baseURL + `/showtimes/showtimegroups`, {
+        params: data
     }
     );
     return res.result;

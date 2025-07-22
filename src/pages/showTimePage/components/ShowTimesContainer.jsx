@@ -4,6 +4,7 @@ export default function ShowTimesContainer({
   showtimes,
   format,
   handleShowtimeClick,
+  price,
 }) {
   return (
     <>
@@ -22,10 +23,8 @@ export default function ShowTimesContainer({
               onClick={() => handleShowtimeClick(showtime)}
               className="bg-gray-700 hover:bg-blue-600 text-white py-1 cursor-pointer px-1 rounded-lg transition-all duration-200 hover:shadow-lg hover:scale-105 active:scale-95"
             >
-              <div className="font-bold text-lg">
-                {showtime.startTime?.slice(0, 5)}
-              </div>
-              <div className="text-sm text-gray-300">${showtime.basePrice}</div>
+              <div className="font-bold text-lg">{showtime.startTime}</div>
+              <div className="text-sm text-gray-300">${price}</div>
             </button>
           ))}
         </div>

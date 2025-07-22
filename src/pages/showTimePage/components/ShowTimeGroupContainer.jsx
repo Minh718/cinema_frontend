@@ -1,20 +1,25 @@
+// @ts-nocheck
+import Cookies from "js-cookie";
 import React, { useEffect, useState } from "react";
 import { HiClock, HiPlay, HiUsers } from "react-icons/hi";
-import Cookies from "js-cookie";
-import ShowTimesContainer from "./ShowTimesContainer";
-import { useNavigate } from "react-router-dom";
-import LoadingComponent from "../../../components/LoadingComponent";
-import { getShowTimesOfMovieInDate } from "../../../api/showtime";
 import { useSelector } from "react-redux";
-export default function MovieContainer({ movie, date }) {
+import { useNavigate } from "react-router-dom";
+import { getDetailMovie } from "../../../api/movie";
+import LoadingComponent from "../../../components/LoadingComponent";
+import { TypeShowTime } from "../../../constants/TypeShowTime";
+import ShowTimesContainer from "./ShowTimesContainer";
+export default function ShowTimeGroupContainer({
+  showTimeGroup,
+  typeShowTime,
+}) {
   const { isAuthenticated } = useSelector((state) => state.auth);
+  const [movie, setMovie] = useState(null);
   const navigate = useNavigate();
-  const [movieShowtimeDetails, setMovieShowtimeDetails] = useState(null);
   const handleShowtimeClick = (showtime) => {
     const bookingData = {
       movie,
       showTimeId: showtime.id,
-      roomId: movieShowtimeDetails?.roomId,
+      roomId: showTimeGroup.roomId,
     };
     if (!isAuthenticated) {
       Cookies.set("bookingIntent", JSON.stringify(bookingData), {
@@ -24,22 +29,18 @@ export default function MovieContainer({ movie, date }) {
     } else navigate("/booking", { state: { bookingData } });
   };
   useEffect(() => {
-    const fetchShowtimes = async () => {
+    const fetchDetailMovie = async () => {
       try {
-        const data = await getShowTimesOfMovieInDate({
-          movieId: movie.id,
-          date,
-        });
-        setMovieShowtimeDetails(data);
+        const data = await getDetailMovie(showTimeGroup.movieId);
+        setMovie(data);
       } catch (error) {
-        return <></>;
+        console.error(error);
       }
     };
 
-    if (movie?.id) {
-      fetchShowtimes();
-    }
-  }, [movie, date]);
+    fetchDetailMovie();
+  }, [showTimeGroup]);
+  if (movie === null) return <LoadingComponent />;
   return (
     <div
       key={movie.id}
@@ -88,23 +89,16 @@ export default function MovieContainer({ movie, date }) {
               Suất Chiếu
             </h3>
           </div>
-          {movieShowtimeDetails === null ? (
-            <LoadingComponent />
-          ) : (
-            <>
-              <ShowTimesContainer
-                handleShowtimeClick={handleShowtimeClick}
-                format={"2D Subtitle Movie"}
-                showtimes={movieShowtimeDetails.subShows}
-              />
-              <div className="mt-4"></div>
-              <ShowTimesContainer
-                handleShowtimeClick={handleShowtimeClick}
-                format={"2D Dubbed Movie"}
-                showtimes={movieShowtimeDetails.dubShows}
-              />
-            </>
-          )}
+          <ShowTimesContainer
+            handleShowtimeClick={handleShowtimeClick}
+            format={
+              typeShowTime === TypeShowTime.DUBBED
+                ? "2D Dubbed Movie"
+                : "2D Subtitle Movie"
+            }
+            showtimes={showTimeGroup.showTimes}
+            price={showTimeGroup.basePrice}
+          />
         </div>
       </div>
     </div>

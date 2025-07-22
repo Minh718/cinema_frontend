@@ -1,3 +1,4 @@
+// @ts-nocheck
 import axios from "axios";
 import { baseURL } from "../constants/baseURL";
 
@@ -51,14 +52,26 @@ export const getMoviesForHomePage = async () => {
 
 };
 
-export const getMovieById = async ({ movieId }) => {
+export const getDetailMovie = async (movieId) => {
     return {
         "id": 1,
-        "title": "The Dark Knight",
-        "description": "When the menace known as the Joker wreaks havoc and chaos on the people of Gotham...",
-        "posterPath": "https://images.unsplash.com/photo-1509347528160-9a9e33742cdb",
-        "genres": ["Action", "Crime", "Drama"],
-        "nowShowing": true
+        "title": "Inception",
+        "originalTitle": "Inception",
+        "ageRating": "16+",
+        "description": "A skilled thief is given a chance at redemption if he can successfully perform inception.",
+        "duration": 148,
+        "director": "Christopher Nolan",
+        "language": "English",
+        "genres": [
+            { "id": 1, "name": "Action" },
+            { "id": 2, "name": "Sci-Fi" },
+            { "id": 3, "name": "Thriller" }
+        ],
+        "status": "NOW_SHOWING",
+        "thumbnailUrl": "https://example.com/thumbnails/inception.jpg",
+        "releaseDate": "2025-08-01",
+        "backdropPath": "https://example.com/backdrops/inception.jpg",
+        "posterPath": "https://example.com/posters/inception.jpg"
     }
     const res = await axios.get(
         baseURL + `/movies/public/${movieId}`

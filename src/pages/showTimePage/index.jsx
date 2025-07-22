@@ -1,15 +1,12 @@
+// @ts-nocheck
 import React, { useEffect, useState } from "react";
-import {
-  HiChevronLeft,
-  HiChevronRight,
-  HiPlay,
-  HiClock,
-  HiUsers,
-} from "react-icons/hi";
+import { HiChevronLeft, HiChevronRight } from "react-icons/hi";
+import { getShowTimeGroupsByTypeInDate } from "../../api/showtime";
 import { Button } from "../../components/Button";
-import { generateDates } from "../../utils/DateUtil";
-import MovieContainer from "./components/MovieContainer";
-import { getNowShowingMovies } from "../../api/movie";
+import { TypeShowTime } from "../../constants/TypeShowTime";
+import { generateDates, getCurrentDate } from "../../utils/DateUtil";
+import ShowTimeGroupContainer from "./components/ShowTimeGroupContainer";
+import ToggleSubDub from "./components/ToggleSubDub";
 
 // Mock data for movies and showtimes
 // const moviesData = {
@@ -69,22 +66,25 @@ import { getNowShowingMovies } from "../../api/movie";
 // };
 
 export default function ShowtimePage() {
-  const [selectedDate, setSelectedDate] = useState("2024-01-15");
   const [dates, setDates] = useState(generateDates());
-  const [movies, setMovies] = useState([]);
-
+  const [selectedDate, setSelectedDate] = useState(getCurrentDate());
+  const [typeShowTime, setTypeShowTime] = useState(TypeShowTime.SUBTITLE);
+  const [showTimeGroups, setShowTimeGroups] = useState([]);
   useEffect(() => {
-    const fetchNowShowingMovies = async () => {
+    const fetchShowTimeGroupsByTypeInDate = async () => {
       try {
-        const data = await getNowShowingMovies();
-        setMovies(data);
+        const data = await getShowTimeGroupsByTypeInDate({
+          date: selectedDate,
+          type: typeShowTime,
+        });
+        setShowTimeGroups(data);
       } catch (error) {
-        return <></>;
+        console.error(error);
       }
     };
 
-    fetchNowShowingMovies();
-  }, []);
+    fetchShowTimeGroupsByTypeInDate();
+  }, [selectedDate, typeShowTime]);
   return (
     <div className="min-h-screen bg-gray-900 text-white">
       {/* Header */}
@@ -152,7 +152,7 @@ export default function ShowtimePage() {
 
       {/* Movies List */}
       <div className="container mx-auto px-4 pb-8">
-        {movies.length === 0 ? (
+        {showTimeGroups.length === 0 ? (
           <div className="text-center py-12">
             <div className="text-gray-400 text-lg">
               Không có suất chiếu nào trong ngày này
@@ -160,11 +160,12 @@ export default function ShowtimePage() {
           </div>
         ) : (
           <div className="space-y-8">
-            {movies.map((movie) => (
-              <MovieContainer
-                movie={movie}
-                key={movie.id}
-                date={selectedDate}
+            <ToggleSubDub value={typeShowTime} onChange={setTypeShowTime} />
+            {showTimeGroups.map((showTimeGroup) => (
+              <ShowTimeGroupContainer
+                showTimeGroup={showTimeGroup}
+                typeShowTime={typeShowTime}
+                key={showTimeGroup.id}
               />
             ))}
           </div>

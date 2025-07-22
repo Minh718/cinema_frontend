@@ -20,7 +20,7 @@ import {
   CardHeader,
   CardTitle,
 } from "../../components/Card";
-import { getShowTimeAvailable } from "../../api/showtime";
+import { getBookableDetailShowTime } from "../../api/showtime";
 import {
   getBookedSeatsOfShowTime,
   getheatSeatsOfShowTime,
@@ -110,7 +110,7 @@ export default function ShowtimeBooking() {
       try {
         const [roomRes, showtime, bookedSeats, headSeats] = await Promise.all([
           getDetailRoomByRoomId(bookingData.roomId),
-          getShowTimeAvailable(bookingData.showTimeId),
+          getBookableDetailShowTime(bookingData.showTimeId),
           getBookedSeatsOfShowTime(bookingData.showTimeId),
           getheatSeatsOfShowTime(bookingData.showTimeId),
         ]);
