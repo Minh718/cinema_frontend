@@ -11,7 +11,7 @@ const Header = () => {
   const { cinemas, cinemaId } = useSelector((state) => state.cinema);
   const [selectedCinemaId, setSelectedCinemaId] = useState(cinemaId);
   const [isOpen, setIsOpen] = useState(false);
-  const { isAuthenticated } = useSelector((state) => state.auth);
+  const { isAuthenticated, user } = useSelector((state) => state.auth);
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -34,9 +34,8 @@ const Header = () => {
 
   const navigationLinks = [
     { name: "Home", path: "/" },
-    { name: "Movies", path: "/movies" },
     { name: "Showtimes", path: "/showtimes" },
-    { name: "Admin", path: "/admin" },
+    { name: "Community", path: "/community" },
     { name: "Contact", path: "#" },
   ];
   const handleChangeCinema = (e) => {
@@ -142,6 +141,18 @@ const Header = () => {
                     >
                       <FaCog className="mr-2" /> Settings
                     </a>
+                    {["admin", "manager", "customer-support"].some((role) =>
+                      user.realm_access.roles.includes(role)
+                    ) && (
+                      <Link
+                        to="/admin"
+                        className={`flex items-center px-4 py-2 text-sm ${
+                          isDarkMode ? "text-gray-300" : "text-gray-700"
+                        } hover:bg-gray-700`}
+                      >
+                        <FaCog className="mr-2" /> Dashboard
+                      </Link>
+                    )}
                     <a
                       href="#"
                       onClick={handleLogout}

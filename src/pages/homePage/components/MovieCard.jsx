@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const MovieCard = ({ movie }) => (
   <div className="relative group overflow-hidden rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-xl">
@@ -20,9 +21,11 @@ const MovieCard = ({ movie }) => (
             </span>
           ))}
         </div>
-        <button className="w-full bg-white text-black py-2 rounded-md hover:bg-red-600 hover:text-white transition-colors">
-          View Details
-        </button>
+        <Link to={`/movies/${movie.id}`}>
+          <button className="cursor-pointer w-full bg-white text-black py-2 rounded-md hover:bg-red-600 hover:text-white transition-colors">
+            View Details
+          </button>
+        </Link>
       </div>
     </div>
   </div>

@@ -2,6 +2,7 @@
 import axios from "axios";
 import { baseURL } from "../constants/baseURL";
 
+export const url_image_movie = "https://image.tmdb.org/t/p/w500";
 export const getMoviesForHomePage = async () => {
     // const res = await axios.get(
     //     baseURL + `/movies/public/homepage`
@@ -58,7 +59,8 @@ export const getDetailMovie = async (movieId) => {
         "title": "Inception",
         "originalTitle": "Inception",
         "ageRating": "16+",
-        "description": "A skilled thief is given a chance at redemption if he can successfully perform inception.",
+        rating: 8.7,
+        "overview": "A skilled thief is given a chance at redemption if he can successfully perform inception.",
         "duration": 148,
         "director": "Christopher Nolan",
         "language": "English",
@@ -67,11 +69,13 @@ export const getDetailMovie = async (movieId) => {
             { "id": 2, "name": "Sci-Fi" },
             { "id": 3, "name": "Thriller" }
         ],
+        trailer: "/placeholder.svg?height=315&width=560",
         "status": "NOW_SHOWING",
         "thumbnailUrl": "https://example.com/thumbnails/inception.jpg",
         "releaseDate": "2025-08-01",
         "backdropPath": "https://example.com/backdrops/inception.jpg",
-        "posterPath": "https://example.com/posters/inception.jpg"
+        "posterPath": "https://example.com/posters/inception.jpg",
+        cast: ["Timothée Chalamet", "Zendaya", "Rebecca Ferguson", "Josh Brolin"]
     }
     const res = await axios.get(
         baseURL + `/movies/public/${movieId}`

@@ -31,13 +31,14 @@ import { processSeatsBooking } from "../../api/booking";
 import { API_URL } from "../../constants/baseURL";
 import { TypeSeat } from "../../constants/TypeSeat";
 import { TypeMessageSeat } from "../../constants/TypeMessageSeat";
+import { formatMinutesToHourMinute } from "../../utils/DateUtil";
 const movieData = {
   title: "Dune: Part Two",
   poster: "/placeholder.svg?height=300&width=200",
   room: "Cinema Hall 1",
   date: "March 15, 2024",
   time: "7:30 PM",
-  duration: "2h 46m",
+  duration: 242,
   pricePerSeat: 45000,
 };
 export default function ShowtimeBooking() {
@@ -233,7 +234,10 @@ export default function ShowtimeBooking() {
     (seat) => seat.status === TypeSeat.SELECTED
   );
   const totalPrice = selectedSeats.length * showTime.basePrice;
-
+  console.log(cinema);
+  console.log(cinema.cinemas.find((c) => c.id === cinema.cinemaId));
+  console.log(cinema.cinemas);
+  console.log(cinema.cinemaId);
   if (room == null) return <div>Loading...</div>;
   return (
     <>
@@ -264,7 +268,7 @@ export default function ShowtimeBooking() {
                   </div>
                   <div className="flex items-center gap-2">
                     <FaUsers className="w-5 h-5 text-blue-400" />
-                    <span>{movieData.duration}</span>
+                    <span>{formatMinutesToHourMinute(movieData.duration)}</span>
                   </div>
                 </div>
               </div>
@@ -427,7 +431,8 @@ export default function ShowtimeBooking() {
         isOpen={isModalOpen}
         onClose={() => setModalOpen(false)}
         bookingData={{
-          cinemaName: cinema.cinemas.find((c) => c.id === cinema.cinemaId).name,
+          cinemaName: cinema.cinemas.find((c) => c.id === cinema.cinemaId)
+            ?.name,
           movieTitle: movie?.title,
           showTime: `${showTime.startTime} - ${showTime.endTime} | ${showTime.date}`,
           seats: selectedSeats.map((seat) => seat.code).join(", "),

@@ -26,7 +26,7 @@ export default function LoginPage() {
           family_name: "Nguyen",
           email: "minh@example.com",
           realm_access: {
-            roles: ["user", "cinema-customer"],
+            roles: ["user", "cinema-customer", "admin"],
           },
         },
       })

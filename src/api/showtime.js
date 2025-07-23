@@ -149,3 +149,92 @@ export const getShowTimeGroupsByTypeInDate = async (data) => {
     );
     return res.result;
 }
+export const getShowTimeGroupsbyMovieInDate = async (data) => {
+    return [{
+        "id": 11,
+        "language": "English",
+        "subtitle": "Vietnamese",
+        "basePrice": 120,
+        "movieId": 1,
+        "roomId": 5,
+        "cinemaId": 3,
+        "type": "SUBTITLE",
+
+        "showTimes": [
+            {
+                "id": 101,
+                "startTime": "14:00",
+                "endTime": "16:00"
+            },
+            {
+                "id": 102,
+                "startTime": "10:00",
+                "endTime": "12:00"
+
+            },
+            {
+                "id": 1011,
+                "startTime": "12:00",
+                "endTime": "16:00"
+            },
+            {
+                "id": 1012,
+                "startTime": "11:00",
+                "endTime": "12:00"
+
+            },
+            {
+                "id": 1021,
+                "startTime": "11:00",
+                "endTime": "16:00"
+            },
+            {
+                "id": 1032,
+                "startTime": "10:00",
+                "endTime": "12:00"
+
+            },
+            {
+                "id": 10233,
+                "startTime": "14:00",
+                "endTime": "16:00"
+            },
+            {
+                "id": 1332,
+                "startTime": "10:00",
+                "endTime": "12:00"
+
+            }
+        ],
+    },
+    {
+        "id": 12,
+        "language": "English",
+        "subtitle": "Vietnamese",
+        "basePrice": 120,
+        "movieId": 1,
+        "roomId": 5,
+        "cinemaId": 3,
+        "type": "DUBBED",
+        "showTimes": [
+            {
+                "id": 201,
+                "startTime": "18:00",
+                "endTime": "20:00"
+
+            }, {
+                "id": 201,
+                "startTime": "20:00",
+                "endTime": "22:00"
+
+            }
+        ]
+    },
+    ]
+    const res = await axios.get(
+        baseURL + `/showtimes/showtimegroups`, {
+        params: data
+    }
+    );
+    return res.result;
+}

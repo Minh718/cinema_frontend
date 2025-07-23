@@ -66,7 +66,7 @@ import ToggleSubDub from "./components/ToggleSubDub";
 // };
 
 export default function ShowtimePage() {
-  const [dates, setDates] = useState(generateDates());
+  const [dates, setDates] = useState(generateDates(7));
   const [selectedDate, setSelectedDate] = useState(getCurrentDate());
   const [typeShowTime, setTypeShowTime] = useState(TypeShowTime.SUBTITLE);
   const [showTimeGroups, setShowTimeGroups] = useState([]);

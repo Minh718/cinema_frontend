@@ -58,7 +58,7 @@ function App() {
           element: <HomePage />,
         },
         {
-          path: "/movie/1",
+          path: "/movies/:movieId",
           element: <MovieDetailPage />,
         },
         {

@@ -2,7 +2,6 @@
 import axios from "axios";
 import { baseURL } from "../constants/baseURL";
 import axiosInstance from "./axiosInstance";
-
 export const getAllCinemas = async () => {
     return [
         { id: 1, name: "Cinema A", lat: 10.762622, lon: 106.660172, address: "123 Main Street, Anytown, USA" },

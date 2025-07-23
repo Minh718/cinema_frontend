@@ -1,8 +1,8 @@
-export const generateDates = () => {
+export const generateDates = (n) => {
     const dates = [];
     const today = new Date();
 
-    for (let i = 0; i < 7; i++) {
+    for (let i = 0; i < n; i++) {
         const date = new Date(today);
         date.setDate(today.getDate() + i);
 
@@ -29,4 +29,37 @@ export const generateDates = () => {
 export const getCurrentDate = () => {
     const today = new Date();
     return today.toISOString().split("T")[0];
+}
+
+export const formatIsoDateToFullEnglishDate = (dateStr) => {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+    });
+}
+
+export const formatMinutesToHourMinute = (durationMinutes) => {
+    const hours = Math.floor(durationMinutes / 60);
+    const minutes = durationMinutes % 60;
+
+    let result = "";
+    if (hours > 0) result += `${hours}h`;
+    if (minutes > 0) result += (hours > 0 ? " " : "") + `${minutes}min`;
+
+    return result || "0min";
+}
+
+export const convert24HourToAmPm = (timeStr) => {
+
+    const [hourStr, minuteStr] = timeStr.split(":");
+    let hour = parseInt(hourStr, 10);
+    const minute = minuteStr.padStart(2, "0");
+
+    const ampm = hour >= 12 ? "PM" : "AM";
+    hour = hour % 12;
+    if (hour === 0) hour = 12;
+
+    return `${hour}:${minute} ${ampm}`;
 }
