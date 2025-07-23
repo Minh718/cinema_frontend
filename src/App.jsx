@@ -24,6 +24,7 @@ import PollingBookingPage from "./pages/pollingBookingPage";
 import ShowtimePage from "./pages/showTimePage";
 import PrivateRoute from "./PrivateRoute";
 import PrivateAdminRoute from "./PrivateAdminRoute";
+import CinemaChatPage from "./pages/chatPage";
 function App() {
   const { isAuthenticated } = useSelector((state) => state.auth);
 
@@ -45,6 +46,10 @@ function App() {
           element: <Dashboard />,
         },
       ],
+    },
+    {
+      path: "/community",
+      element: <CinemaChatPage />,
     },
     {
       path: "/authenticate",
