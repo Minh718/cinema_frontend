@@ -11,7 +11,7 @@ import {
   IoPlay,
   IoChevronForward,
 } from "react-icons/io5";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { getDetailMovie } from "../../api/movie";
 import LoadingPage from "../../components/LoadingPage";
 import {
@@ -66,15 +66,17 @@ export default function MovieDetailPage() {
       </div>
 
       {/* Back Button */}
-      <div className="container mx-auto px-4 py-4">
-        <Button
-          variant="ghost"
-          className="text-gray-400 hover:text-white hover:bg-gray-800 transition-all duration-200"
-        >
-          <IoArrowBack className="w-4 h-4 mr-2" />
-          Back to Movies
-        </Button>
-      </div>
+      <Link to={"/movies"}>
+        <div className="container mx-auto px-4 py-4">
+          <Button
+            variant="ghost"
+            className="text-gray-400 hover:text-white hover:bg-gray-800 transition-all duration-200"
+          >
+            <IoArrowBack className="w-4 h-4 mr-2" />
+            Back to Movies
+          </Button>
+        </div>
+      </Link>
 
       {/* Hero Section */}
       <div className="container mx-auto px-4 py-8">

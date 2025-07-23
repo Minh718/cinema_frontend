@@ -16,6 +16,7 @@ import Home from "./pages";
 import Authenticate from "./pages/authenticate";
 import BookingPage from "./pages/bookingPage";
 import HomePage from "./pages/homePage";
+import MoviesPage from "./pages/moviesPage";
 import LoginPage from "./pages/login";
 import MovieDetailPage from "./pages/movieDetailPage";
 import NotFoundPage from "./pages/notFoundPage";
@@ -58,7 +59,11 @@ function App() {
           element: <HomePage />,
         },
         {
-          path: "/movies/:movieId",
+          path: "/movies",
+          element: <MoviesPage />,
+        },
+        {
+          path: "/movie/:movieId",
           element: <MovieDetailPage />,
         },
         {

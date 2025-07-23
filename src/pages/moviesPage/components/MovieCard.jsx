@@ -4,9 +4,9 @@ import { Link } from "react-router-dom";
 const MovieCard = ({ movie }) => (
   <div className="relative group overflow-hidden rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-xl">
     <img
-      src={movie.posterPath}
+      src={movie.backdropPath}
       alt={movie.title}
-      className="w-full h-[400px] object-cover"
+      className="w-full h-[200px] object-cover"
     />
     <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent">
       <div className="absolute bottom-0 p-4 w-full">

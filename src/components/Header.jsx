@@ -34,6 +34,7 @@ const Header = () => {
 
   const navigationLinks = [
     { name: "Home", path: "/" },
+    { name: "Movies", path: "/movies" },
     { name: "Showtimes", path: "/showtimes" },
     { name: "Community", path: "/community" },
     { name: "Contact", path: "#" },

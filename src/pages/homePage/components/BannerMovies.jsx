@@ -31,7 +31,7 @@ export default function BannerMovies({ movies }) {
                     {movie.title}
                   </h2>
                   <p className="text-lg md:text-xl max-w-2xl mb-6">
-                    {movie.description}
+                    {movie.overview}
                   </p>
                 </div>
               </div>
