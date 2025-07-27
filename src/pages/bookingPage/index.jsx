@@ -234,10 +234,6 @@ export default function ShowtimeBooking() {
     (seat) => seat.status === TypeSeat.SELECTED
   );
   const totalPrice = selectedSeats.length * showTime.basePrice;
-  console.log(cinema);
-  console.log(cinema.cinemas.find((c) => c.id === cinema.cinemaId));
-  console.log(cinema.cinemas);
-  console.log(cinema.cinemaId);
   if (room == null) return <div>Loading...</div>;
   return (
     <>

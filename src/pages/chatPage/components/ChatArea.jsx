@@ -78,6 +78,7 @@ export function ChatArea({ activeGroup }) {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
+    return () => {};
   }, [messages]);
 
   const handleSendMessage = () => {
@@ -86,10 +87,7 @@ export function ChatArea({ activeGroup }) {
         id: Date.now().toString(),
         user: "You",
         message: message.trim(),
-        timestamp: new Date().toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
+        timestamp: new Date(),
         avatar: "/placeholder.svg?height=32&width=32",
       };
       setMessages((prev) => [...prev, newMessage]);

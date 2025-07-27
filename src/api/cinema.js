@@ -4,9 +4,9 @@ import { baseURL } from "../constants/baseURL";
 import axiosInstance from "./axiosInstance";
 export const getAllCinemas = async () => {
     return [
-        { id: 1, name: "Cinema A", lat: 10.762622, lon: 106.660172, address: "123 Main Street, Anytown, USA" },
-        { id: 2, name: "Cinema B", lat: 10.762913, lon: 106.682171, address: "456 Elm Street, Anytown, USA" },
-        { id: 3, name: "Cinema C", lat: 21.028511, lon: 105.804817, address: "789 Oak Street, Anytown, USA" },
+        { id: 1, name: "Cinema A", lat: 10.762622, lon: 106.660172, address: "123 Main Street, Anytown, USA", chatBoxId: 1 },
+        { id: 2, name: "Cinema B", lat: 10.762913, lon: 106.682171, address: "456 Elm Street, Anytown, USA", chatBoxId: 2 },
+        { id: 3, name: "Cinema C", lat: 21.028511, lon: 105.804817, address: "789 Oak Street, Anytown, USA", chatBoxId: 3 },
     ]
     const res = await axios.get(
         baseURL + `/cinemas/public`
