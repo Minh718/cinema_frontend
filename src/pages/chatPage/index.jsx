@@ -8,12 +8,12 @@ import { useSelector } from "react-redux";
 import LoadingPage from "../../components/LoadingPage";
 import ChatAreaGroup from "./components/ChatAreaGroup";
 import ChatAreaPrivate from "./components/ChatAreaPrivate";
+import { trackOfflineUser, trackOnlineUser } from "../../api/messaging";
 
 export default function CinemaChatPage() {
   const { cinemaId, cinemas } = useSelector((state) => state.cinema);
-
+  const [size, setSize] = useState(3);
   const [activeChatBox, setActiveChatBox] = useState(null);
-  console.log(activeChatBox);
   useEffect(() => {
     if (!cinemas) return;
     const selectedCinema = cinemas.find((c) => c.id === cinemaId);
@@ -25,7 +25,16 @@ export default function CinemaChatPage() {
       },
       type: TypeChatBox.GROUP,
     }));
-  }, [cinemas]);
+  }, [cinemas, cinemaId]);
+  useEffect(() => {
+    trackOnlineUser();
+    return () => {
+      trackOfflineUser();
+    };
+  }, []);
+  useEffect(() => {
+    setSize(3);
+  }, [activeChatBox]);
   if (!activeChatBox) return <LoadingPage />;
 
   return (
@@ -38,9 +47,17 @@ export default function CinemaChatPage() {
           />
           <main className="md:pl-64 flex-1 flex flex-col h-full overflow-hidden">
             {activeChatBox.type === TypeChatBox.GROUP ? (
-              <ChatAreaGroup chatBox={activeChatBox.data} />
+              <ChatAreaGroup
+                chatBox={activeChatBox.data}
+                size={size}
+                setSize={setSize}
+              />
             ) : (
-              <ChatAreaPrivate chatBox={activeChatBox.data} />
+              <ChatAreaPrivate
+                chatBox={activeChatBox.data}
+                size={size}
+                setSize={setSize}
+              />
             )}
           </main>
         </div>

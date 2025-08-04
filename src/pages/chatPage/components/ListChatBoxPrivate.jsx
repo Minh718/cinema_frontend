@@ -20,7 +20,6 @@ export default function ListChatBoxPrivate({
 }) {
   const [chatBoxes, setChatBoxes] = useState([]);
   const { token } = useSelector((state) => state.auth);
-  console.log(chatBoxes);
   useEffect(() => {
     if (!token) return;
 
@@ -30,12 +29,12 @@ export default function ListChatBoxPrivate({
     const stompClient = Stomp.over(socket);
 
     stompClient.connect({}, () => {
-      stompClient.subscribe("/user/queue/chat-notification", (msg) => {
-        const { message, userId } = JSON.parse(msg.body);
+      stompClient.subscribe("/user/specific/chat-notification", (msg) => {
+        const { message, id: friendId } = JSON.parse(msg.body);
 
         setChatBoxes((prevChatBoxes) =>
           prevChatBoxes.map((chatBox) => {
-            if (chatBox.id !== userId) return chatBox;
+            if (chatBox.id !== friendId) return chatBox;
 
             const prevNotification = chatBox.notification || {
               previewMessage: "",

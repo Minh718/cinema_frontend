@@ -15,7 +15,7 @@ export default function LoginPage() {
     dispatch(
       setAuth({
         keycloak: null,
-        token: null,
+        token: "1a2b3c4d-5678-90ef-gh12-345678901234",
         isAuthenticated: true,
         user: {
           sub: "1a2b3c4d-5678-90ef-gh12-345678901234",

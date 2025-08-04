@@ -5,9 +5,7 @@ import {
   createBrowserRouter,
   Navigate,
   RouterProvider,
-  useNavigate,
 } from "react-router-dom";
-import Cookies from "js-cookie";
 
 import Dashboard from "./admin/page/Dashboard";
 import "./App.css";
@@ -15,16 +13,16 @@ import { getNearestCinema } from "./features/cinema/cinemaSlice";
 import Home from "./pages";
 import Authenticate from "./pages/authenticate";
 import BookingPage from "./pages/bookingPage";
+import CinemaChatPage from "./pages/chatPage";
 import HomePage from "./pages/homePage";
-import MoviesPage from "./pages/moviesPage";
 import LoginPage from "./pages/login";
 import MovieDetailPage from "./pages/movieDetailPage";
+import MoviesPage from "./pages/moviesPage";
 import NotFoundPage from "./pages/notFoundPage";
 import PollingBookingPage from "./pages/pollingBookingPage";
 import ShowtimePage from "./pages/showTimePage";
-import PrivateRoute from "./PrivateRoute";
 import PrivateAdminRoute from "./PrivateAdminRoute";
-import CinemaChatPage from "./pages/chatPage";
+import PrivateRoute from "./PrivateRoute";
 function App() {
   const { isAuthenticated } = useSelector((state) => state.auth);
 
@@ -49,7 +47,13 @@ function App() {
     },
     {
       path: "/community",
-      element: <CinemaChatPage />,
+      element: <PrivateRoute />,
+      children: [
+        {
+          index: true,
+          element: <CinemaChatPage />,
+        },
+      ],
     },
     {
       path: "/authenticate",
